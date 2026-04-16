@@ -13,9 +13,11 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface SetmealMapper {
+
 
     /**
      * 根据分类id查询套餐的数量
@@ -78,4 +80,11 @@ public interface SetmealMapper {
     //TODO
     @Update("")
     void update(Setmeal setmeal);
+
+    /**
+     * 查询套餐总览
+     * @param map
+     * @return
+     */
+    Integer countByMap(Map map);
 }
