@@ -1,7 +1,9 @@
 package com.sky.controller.admin;
 
 import com.sky.result.Result;
+import com.sky.service.OrderService;
 import com.sky.service.ReportService;
+import com.sky.vo.OrderReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import io.swagger.annotations.Api;
@@ -23,6 +25,8 @@ public class ReportController {
 
     @Autowired
     private ReportService reportService;
+    @Autowired
+    private OrderService orderService;
 
     /**
      * 统计指定区间的营业额
@@ -50,5 +54,20 @@ public class ReportController {
                                                @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end){
 
         return Result.success(reportService.getUSerStatistics(begin,end));
+    }
+
+    /**
+     * 订单统计接口
+     * @param begin
+     * @param end
+     * @return
+     */
+    @GetMapping("/ordersStatistics")
+    @ApiOperation("订单统计接口")
+    public Result<OrderReportVO> ordersStatistics(@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate begin,
+                                                  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end){
+
+
+        return Result.success(reportService.getOrders(begin,end));
     }
 }
