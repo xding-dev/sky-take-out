@@ -1,10 +1,13 @@
 package com.sky.service.impl;
 
+import com.sky.dto.GoodsSalesDTO;
 import com.sky.entity.Orders;
+import com.sky.mapper.OrderDetailMapper;
 import com.sky.mapper.OrderMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.ReportService;
 import com.sky.vo.OrderReportVO;
+import com.sky.vo.SalesTop10ReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import io.swagger.models.auth.In;
@@ -20,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ReportServiceImpl implements ReportService {
@@ -29,6 +33,9 @@ public class ReportServiceImpl implements ReportService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private OrderDetailMapper  orderDetailMapper;
 
 
 
@@ -183,8 +190,35 @@ public class ReportServiceImpl implements ReportService {
                 .orderCompletionRate(orderCompletionRate)
                 .build();
     }
-    
-    
+
+
+    /**
+     * 查询销量排名top10接口
+     * @param begin
+     * @param end
+     * @return
+     */
+    public SalesTop10ReportVO getTopTenOreders(LocalDate begin, LocalDate end) {
+        LocalDateTime beginTime = LocalDateTime.of(begin,LocalTime.MIN);
+        LocalDateTime endTime = LocalDateTime.of(begin,LocalTime.MAX);
+
+        List<GoodsSalesDTO> list =  orderDetailMapper.getTopTenOrders(beginTime,endTime);
+        List<String> nameList = list.stream().map(GoodsSalesDTO::getName).collect(Collectors.toList());
+        List<Integer> numberList = list.stream().map(GoodsSalesDTO::getNumber).collect(Collectors.toList());
+
+
+
+        return SalesTop10ReportVO
+                .builder()
+                .nameList(StringUtils.join(nameList,","))
+                .numberList(StringUtils.join(numberList,","))
+                .build();
+    }
+
+
+
+
+
     //当前方法的集合用于存放从begin 到 end 之间的日期
     public List<LocalDate>  getDateList(LocalDate begin, LocalDate end) {
         List<LocalDate> dateList = new ArrayList<>();
@@ -196,4 +230,5 @@ public class ReportServiceImpl implements ReportService {
         }
         return dateList;
     }
+
 }
